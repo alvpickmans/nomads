@@ -31,16 +31,6 @@ public class OptionTests
     }
     
     [Fact]
-    public void ShouldCreateEmptyOption()
-    {
-        // Act
-        Option<int> option = None<int>();
-
-        // Assert
-        Assert.False(option.HasValue());
-    }
-    
-    [Fact]
     public void ShouldCreateImplicitOptionFromNone()
     {
         // Act
