@@ -29,7 +29,7 @@ public class OptionTests
         Assert.True(option.HasValue(out var value));
         Assert.Equal(expected, value);
     }
-    
+
     [Fact]
     public void ShouldCreateImplicitOptionFromNone()
     {

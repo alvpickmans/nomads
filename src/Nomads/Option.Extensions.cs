@@ -1,3 +1,5 @@
+using Nomads.Primitives;
+
 namespace Nomads;
 
 /// <summary>
@@ -19,7 +21,7 @@ public static class Option
     /// </code>
     /// </example>
     /// <returns></returns>
-    public static Option<T> Some<T>(T value) where T : notnull => new(value);
+    public static Option<T> Some<T>(T value) where T : notnull => value;
 
     /// <summary>
     /// Creates a new instance of <see cref="None"/>, generally used to convert it to

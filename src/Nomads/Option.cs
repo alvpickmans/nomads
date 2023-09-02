@@ -1,3 +1,4 @@
+using Nomads.Primitives;
 #if NET_6_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -17,10 +18,10 @@ public readonly struct Option<T> where T : notnull
     /// Creates a instances of <see cref="Option{T}"/> with a value
     /// </summary>
     /// <param name="value"></param>
-    internal Option(T value) => (_value, _hasValue) = (value, true);
+    private Option(T value) => (_value, _hasValue) = (value, true);
 
     /// <summary>
-    /// Implicitly creates an instance of <see cref="Option{T}"/> withy a value
+    /// Implicitly creates an instance of <see cref="Option{T}"/> with a value
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
