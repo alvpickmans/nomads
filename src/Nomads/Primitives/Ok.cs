@@ -1,7 +1,17 @@
 namespace Nomads.Primitives;
 
-public readonly struct Ok<T> where T : notnull
-{
-    public readonly T Value;
-    public Ok(T value) => Value = value;
-}
+/// <summary>
+/// Marker struct mainly used to implicitly create a successful <see cref="Result{TValue,TError}"/>
+/// <para>
+/// Generally advisable to use via static method Nomads.Result.<see cref="Nomads.Result.Ok{TValue}"/>
+/// </para>
+/// </summary>
+/// <typeparam name="T">Type of value</typeparam>
+/// <example>
+/// <code>
+/// <![CDATA[
+/// Result<string, Exception> result = new Ok("Successful");
+/// ]]>
+/// </code>
+/// </example>
+public record struct Ok<T>(T Value) where T : notnull;

@@ -15,8 +15,8 @@ public static class Option
     /// <example>
     /// <code>
     /// <![CDATA[
-    /// Option<string> stringOption = Some("Hello");
-    /// Option<bool> booleanOption = Some(true);
+    /// Option<string> stringOption = Option.Some("Hello");
+    /// Option<bool> booleanOption = Option.Some(true);
     /// ]]>
     /// </code>
     /// </example>
@@ -30,8 +30,8 @@ public static class Option
     /// <example>
     /// <code>
     /// <![CDATA[
-    /// Option<string> stringOption = None();
-    /// Option<bool> booleanOption = None();
+    /// Option<string> stringOption = Option.None();
+    /// Option<bool> booleanOption = Option.None();
     /// ]]>
     /// </code>
     /// </example>
