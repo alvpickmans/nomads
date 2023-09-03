@@ -37,13 +37,4 @@ public static class Option
     /// </example>
     /// <returns></returns>
     public static None None() => new();
-    
-    /// <summary>
-    /// Overload of <see cref="Option{T}.HasValue"/> that does not return the
-    /// value of <see cref="T"/> in case of non-empty Option.
-    /// </summary>
-    /// <param name="option">Option</param>
-    /// <typeparam name="T">Type of option value</typeparam>
-    /// <returns></returns>
-    public static bool HasValue<T>(this Option<T> option) where T : notnull => option.HasValue(out _);
 }

@@ -1,3 +1,5 @@
+using Nomads.Primitives;
+
 namespace Nomads;
 
 public class OptionTests
@@ -12,8 +14,19 @@ public class OptionTests
         Option<string> option = Some(expected);
 
         // Assert
-        Assert.True(option.HasValue(out string? value));
-        Assert.Equal(expected, value);
+        Assert.True(option.HasValue);
+        Assert.Equal(expected, option.Value);
+    }
+    
+    [Fact]
+    public void ShouldCreateEmptyOption()
+    {
+        // Act
+        Option<string> option = None();
+
+        // Assert
+        Assert.False(option.HasValue);
+        Assert.Throws<MemberAccessException>(() => option.Value);
     }
 
     [Fact]
@@ -26,17 +39,18 @@ public class OptionTests
         Option<int> option = expected;
 
         // Assert
-        Assert.True(option.HasValue(out var value));
-        Assert.Equal(expected, value);
+        Assert.True(option.HasValue);
+        Assert.Equal(expected, option.Value);
     }
 
     [Fact]
     public void ShouldCreateImplicitOptionFromNone()
     {
         // Act
-        Option<int> option = None();
+        Option<int> option = new None();
 
         // Assert
-        Assert.False(option.HasValue());
+        Assert.False(option.HasValue);
+        Assert.Throws<MemberAccessException>(() => option.Value);
     }
 }
