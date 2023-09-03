@@ -1,6 +1,6 @@
 namespace Nomads.Linq;
 
-public class OptionsTests
+public class OptionTests
 {
     [Fact]
     public void ShouldMapWithSelector()
