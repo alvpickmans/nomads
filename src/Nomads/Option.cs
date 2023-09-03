@@ -28,9 +28,9 @@ public readonly struct Option<T> where T : notnull
     /// When option is empty, meaning
     /// <see cref="Option{T}.HasValue"/> is false
     /// </exception>
-    public readonly T? Value => HasValue
+    public T? Value => HasValue
         ? _value
-        : throw new MemberAccessException($"Cannot get value from an empty Option.");
+        : throw new MemberAccessException("Cannot get value from an empty Option.");
     
     /// <summary>
     /// Creates a instances of <see cref="Option{T}"/> with a value

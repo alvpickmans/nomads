@@ -12,9 +12,9 @@ public class ResultTests
         Result<string, Exception> result = Ok(expected);
 
         // Assert
-        Assert.False(result.HasError(out _));
-        Assert.True(result.HasValue(out string? value));
-        Assert.Equal(expected, value);
+        Assert.True(result.HasValue);
+        Assert.Equal(expected, result.Value);
+        Assert.Throws<MemberAccessException>(() => result.Error);
     }
     
     [Fact]
@@ -27,9 +27,9 @@ public class ResultTests
         Result<string, Exception> result = expected;
 
         // Assert
-        Assert.False(result.HasError(out _));
-        Assert.True(result.HasValue(out string? value));
-        Assert.Equal(expected, value);
+        Assert.True(result.HasValue);
+        Assert.Equal(expected, result.Value);
+        Assert.Throws<MemberAccessException>(() => result.Error);
     }
     
     [Fact]
@@ -42,9 +42,9 @@ public class ResultTests
         Result<string, Exception> result = Error(new Exception(message));
 
         // Assert
-        Assert.False(result.HasValue(out _));
-        Assert.True(result.HasError(out Exception? error));
-        Assert.Equal(message, error!.Message);
+        Assert.False(result.HasValue);
+        Assert.Equal(message, result.Error!.Message);
+        Assert.Throws<MemberAccessException>(() => result.Value);
     }
     
     [Fact]
@@ -57,8 +57,8 @@ public class ResultTests
         Result<string, Exception> result = new Exception(message);
 
         // Assert
-        Assert.False(result.HasValue(out _));
-        Assert.True(result.HasError(out Exception? error));
-        Assert.Equal(message, error!.Message);
+        Assert.False(result.HasValue);
+        Assert.Equal(message, result.Error!.Message);
+        Assert.Throws<MemberAccessException>(() => result.Value);
     }
 }

@@ -16,9 +16,39 @@ public readonly struct Result<TValue, TError>
 {
     private readonly TValue? _value;
     private readonly TError? _error;
-    private readonly bool _hasValue;
+    
+    /// <summary>
+    /// Result's value, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns true.
+    /// </summary>
+    /// <exception cref="MemberAccessException">
+    /// When result is in error state, meaning
+    /// <see cref="Result{TValue,TError}.HasValue"/> is false
+    /// </exception>
+    public TValue? Value => HasValue
+        ? _value
+        : throw new MemberAccessException("Result is in error and has no value.");
+    
+    /// <summary>
+    /// Result's error, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns false.
+    /// </summary>
+    /// <exception cref="MemberAccessException">
+    /// When result is in successful state, meaning
+    /// <see cref="Result{TValue,TError}.HasValue"/> is true
+    /// </exception>
+    public TError? Error => HasValue
+        ? throw new MemberAccessException("Result is successful and has no error.")
+        : _error;
+    
+    /// <summary>
+    /// Determines if the instance of <see cref="Result{TValue, TError}"/> has a value or not
+    /// </summary>
+#if NET_6_OR_GREATER
+    [MemberNotNullWhen(true, nameof(Value))]
+    [MemberNotNullWhen(false, nameof(Error))]
+#endif
+    public readonly bool HasValue;
 
-    private Result(TValue value) => (_value, _error, _hasValue) = (value, default, true);
+    private Result(TValue value) => (_value, _error, HasValue) = (value, default, true);
     
     private Result(TError error) => (_value, _error) = (default, error);
 
@@ -51,38 +81,5 @@ public readonly struct Result<TValue, TError>
     /// <param name="error">Instance of <see cref="Error{T}"/></param>
     /// <returns></returns>
     public static implicit operator Result<TValue, TError>(Error<TError> error) => new(error.Value);
-
-    
-    /// <summary>
-    /// Determines if the <see cref="Result{TValue,TError}"/> has a successful value,
-    /// returning it if so.
-    /// </summary>
-    /// <param name="value">Possible value if the result is successful</param>
-    /// <returns>True if the result is successful, false if not</returns>
-    public bool HasValue(
-        #if NET_6_OR_GREATER
-        [NotNullWhen(true)]
-        #endif
-        out TValue? value)
-    {
-        value = _value;
-        return _hasValue;
-    }
-
-    /// <summary>
-    /// Determines if the <see cref="Result{TValue,TError}"/> has an error value,
-    /// returning it if so.
-    /// </summary>
-    /// <param name="error">Possible error value if the result is failed</param>
-    /// <returns>True if the result is failed, false if not</returns>
-    public bool HasError(
-        #if NET_6_OR_GREATER
-        [NotNullWhen(true)]
-        #endif
-        out TError? error)
-    {
-        error = _error;
-        return !_hasValue;
-    }
     
 }
