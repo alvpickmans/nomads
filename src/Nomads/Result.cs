@@ -10,34 +10,19 @@ namespace Nomads;
 /// </summary>
 /// <typeparam name="TValue">Type of successful state value</typeparam>
 /// <typeparam name="TError">Type of failed state value</typeparam>
-public readonly struct Result<TValue, TError>
+public readonly record struct Result<TValue, TError>
     where TValue : notnull
     where TError : notnull
 {
-    private readonly TValue? _value;
-    private readonly TError? _error;
-    
     /// <summary>
     /// Result's value, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns true.
     /// </summary>
-    /// <exception cref="MemberAccessException">
-    /// When result is in error state, meaning
-    /// <see cref="Result{TValue,TError}.HasValue"/> is false
-    /// </exception>
-    public TValue? Value => HasValue
-        ? _value
-        : throw new MemberAccessException("Result is in error and has no value.");
-    
+    public readonly TValue? Value;
+
     /// <summary>
     /// Result's error, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns false.
     /// </summary>
-    /// <exception cref="MemberAccessException">
-    /// When result is in successful state, meaning
-    /// <see cref="Result{TValue,TError}.HasValue"/> is true
-    /// </exception>
-    public TError? Error => HasValue
-        ? throw new MemberAccessException("Result is successful and has no error.")
-        : _error;
+    public readonly TError? Error;
     
     /// <summary>
     /// Determines if the instance of <see cref="Result{TValue, TError}"/> has a value or not
@@ -48,9 +33,9 @@ public readonly struct Result<TValue, TError>
 #endif
     public readonly bool HasValue;
 
-    private Result(TValue value) => (_value, _error, HasValue) = (value, default, true);
+    private Result(TValue value) => (Value, Error, HasValue) = (value, default, true);
     
-    private Result(TError error) => (_value, _error) = (default, error);
+    private Result(TError error) => (Value, Error) = (default, error);
 
     /// <summary>
     /// Implicitly creates a successful instance of <see cref="Result{TValue,TError}"/>

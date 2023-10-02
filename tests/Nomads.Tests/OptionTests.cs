@@ -5,7 +5,7 @@ namespace Nomads;
 public class OptionTests
 {
     [Fact]
-    public void ShouldCreateOption()
+    public void CreatesOption_WithSomeConstructor()
     {
         // Arrange
         const string expected = "Hi";
@@ -19,18 +19,18 @@ public class OptionTests
     }
     
     [Fact]
-    public void ShouldCreateEmptyOption()
+    public void CreatesEmptyOption_WithNoneConstructor()
     {
         // Act
         Option<string> option = None();
 
         // Assert
         Assert.False(option.HasValue);
-        Assert.Throws<MemberAccessException>(() => option.Value);
+        Assert.Null(option.Value);
     }
 
     [Fact]
-    public void ShouldImplicitlyCreateOptionFromValue()
+    public void CreatesOption_WithImplicitConversion()
     {
         // Arrange
         int expected = 42;
@@ -44,13 +44,43 @@ public class OptionTests
     }
 
     [Fact]
-    public void ShouldCreateImplicitOptionFromNone()
+    public void CreatesEmptyOption_WithImplicitNoneOperator()
     {
         // Act
         Option<int> option = new None();
 
         // Assert
         Assert.False(option.HasValue);
-        Assert.Throws<MemberAccessException>(() => option.Value);
+        Assert.Equal(default, option.Value);
+    }
+
+    [Fact]
+    public void OptionEquals_WithSomeConstructor()
+    {
+        // Arrange
+        Option<string> option = "All good folks.";
+
+        // Act
+        string result = Some("All good folks.") == option
+            ? option.Value!
+            : "err";
+
+        // Assert
+        Assert.Equal("All good folks.", result);
+    }
+    
+    [Fact]
+    public void OptionEquals_WithNoneConstructor()
+    {
+        // Arrange
+        Option<string> option = "All good folks.";
+
+        // Act
+        string result = None() == option
+            ? option.Value!
+            : "err";
+
+        // Assert
+        Assert.Equal("err", result);
     }
 }
