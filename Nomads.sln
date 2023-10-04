@@ -11,6 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0DFEAE7F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nomads.Tests", "tests\Nomads.Tests\Nomads.Tests.csproj", "{FAB210AA-76BF-4023-AB05-81C95E8E6CCD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{FE5F9CC7-E4A9-44A2-9F08-5B4DD3E40FF9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\design-guidelines.md = docs\design-guidelines.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
