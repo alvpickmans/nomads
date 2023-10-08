@@ -4,7 +4,9 @@ Exploring **monads** from the illiterate perspective of a software engineer that
 
 ## Motivation
 
-I'm mostly a C# developer, and OOP has been all I've known since the beginning ca. 2017. At work, I was introduced to *Railway Oriented Programming* [^1] by a colleague that created an internal library to chain and beautifully create workflows or logic steps. On the first PR review I stared at the amount of methods and overloads, could not understand the difference from something called `Bind()` and something else called `Map()` as they looked terribly similar. In all fairness, comments where very descriptive but without the theoretical background on monads and/or functional programming I feared we would struggle to introduce it as a company-wide pattern. Finally we settled on predominantly having a `Then()` method with overloads for when it acted as a `bind` or `map`, and I cannot stress enough how pleasant is to write code with it. 
+I'm mostly a C# developer, and OOP has been all I've known since the beginning ca. 2017. At work, I was introduced to *Railway Oriented Programming* [^1] by a colleague that created an internal library to chain and beautifully create workflows or logic steps.
+
+On the first PR review I stared at the amount of methods and overloads, could not understand the difference from something called `Bind()` and something else called `Map()` as they looked terribly similar. In all fairness, comments where very descriptive but without the theoretical background on monads and/or functional programming I feared we would struggle to introduce it as a company-wide pattern. Finally we settled on predominantly having a `Then()` method with overloads for when it acted as a `bind` or `map`, and I cannot stress enough how pleasant is to write code with it. 
 
 In parallel, I started to sporadically dabble into [Rust](https://www.rust-lang.org) and soon fell in love with the `no such thing as null` feature and its `Result` and `Option` types, which after so many `Object null exceptions` in csharp, it felt like a breeze of fresh air and paradoxically the [right way to handle not having a value](https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare).
 
@@ -21,8 +23,104 @@ Also, it sounds kinda cute.
 
 ## Usage
 
-> [!WARNING]
-> Big, massive TODO
+### Functors (aka Generics)
+
+Nomads provide implementations for the basic functional functors `Option<T>` and `Result<TValue, TError>`.
+
+
+### Instancing
+
+**Static Constructors**
+```csharp
+using Nomads;
+
+Option<string> someOption = Option.Some("Hi");
+Option<string> noneOption = Option.None();
+
+Result<string, int> okResult = Result.Ok("Ok");
+Result<string, int> okResult = Result.Error(-1);
+```
+
+Adding a static using statement simplifies it (try `global usings`!)
+
+```csharp
+using Nomads;
+using static Nomads.Option;
+using static Nomads.Result;
+
+Option<string> someOption = Some("Hi");
+Option<string> noneOption = None();
+
+Result<string, int> okResult = Ok("Ok");
+Result<string, int> okResult = Error(-1);
+```
+
+**Implicit casting**
+```csharp
+using Nomads;
+using Nomads.Primitives;
+
+Option<string> someOption = "Hi";
+Option<string> noneOption = new None();
+
+Result<string, int> okResult = "Ok";
+Result<string, int> okResult = -1;
+
+// For results where value and error are of the same type,
+// specific Ok() or Error() primitives must be used.
+Result<string, string> sameTypeOkResult = new Ok("Ok");
+Result<string, string> sameTypeErrorResult = new Error("Err");
+```
+
+> [!NOTE] Primitives `None`, `Ok` and `Error` records are primarily used for easy implicit casting in cases types are ambiguous or when user prefers them.
+
+### Resolving values
+
+Both `Option` and `Result` provide a public `HasValue` property that can be queried to determine valid access to the (also public) `Value` property.
+
+```csharp
+Option<string> some = Option.Some("Hey");
+string value = some.HasValue 
+    ? some.Value! 
+    : "???";
+
+Result<string, Exception> result = new Exception("I failed you");
+string output = result.HasValue 
+    ? result.Value 
+    : result.Error!.Message;
+```
+
+Optionally and for convenience, extension methods are provided.
+
+```csharp
+Option<string> value = Option
+    .Some("Hey")
+    .ValueOrElse("???");
+
+string result = Error<string, Exception>(new Exception("I failed you"))
+    .Match(
+        ok => ok,
+        err => err.Message
+    );
+```
+
+### Map (aka Select)
+
+Both `Option` and `Result` functors can be "mapped" with function delegates using `Select()` extension methods.
+
+```csharp
+var option = Option
+    .Some("hi")
+    .Select(x => x.ToUpper());
+Assert.Equal("HI", option.Value!);
+
+var result = Result
+    .Ok("bye")
+    .Select(x => x.ToUpper());
+Assert.Equal("BYE", result.Value!);
+```
+
+> The word `Select` is used to defined a commonly known as `map` operation as is more akin to C# syntax.
 
 ## Resources
 
