@@ -5,7 +5,7 @@ namespace Nomads;
 /// <summary>
 /// Extension methods for <see cref="Option{T}"/>
 /// </summary>
-public static class Option
+public static partial class Option
 {
     /// <summary>
     /// Creates a new instance of <see cref="Option{T}"/> with a value

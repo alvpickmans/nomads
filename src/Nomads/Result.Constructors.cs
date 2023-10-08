@@ -5,7 +5,7 @@ namespace Nomads;
 /// <summary>
 /// Extension methods for <see cref="Result{TValue,TError}"/>
 /// </summary>
-public static class Result
+public static partial class Result
 {
     
     /// <summary>
