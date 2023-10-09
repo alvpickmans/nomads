@@ -25,7 +25,8 @@ jobs:
         run: dotnet restore
 
       - name: dotnet build
-        run: dotnet build --no-restore --configuration $CONFIGURATION
+        run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }}
 
       - name: dotnet test
         run: dotnet test --no-build --configuration $CONFIGURATION
+
