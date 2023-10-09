@@ -10,20 +10,18 @@ env:
   srcProjects: ./src/**/*.csproj
   testProjects: ./tests/**/*.csproj
   currentVersion: 0.1.0
+  dotnetVersion: 6.0.x
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: ['6.0.x']
 
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet ${{matrix.dotnet-version}}
+      - name: Setup dotnet ${{ env.dotnetVersion }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{matrix.dotnet-version}}
+          dotnet-version: ${{ env.dotnetVersion }}
       - name: create build version
         run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_id }}" >> $GITHUB_ENV
 
@@ -64,4 +62,19 @@ jobs:
         with:
           name: Nomads
           path: staging/**/*.nupkg
+  
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Setup dotnet ${{ env.dotnetVersion }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.dotnetVersion }}
+          source-url: https://api.nuget.org/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PAT }}
 
+      - name: dotnet push
+        run: dotnet nuget push ./staging/packages/*.nupkg --skip-duplicate
+        
