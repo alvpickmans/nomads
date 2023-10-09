@@ -1,0 +1,95 @@
+name: build and publish
+on: 
+  pull_request:
+  push:
+    branches:
+      - 'main'
+
+env:
+  buildConfig: Release
+  srcProjects: ./src/**/*.csproj
+  testProjects: ./tests/**/*.csproj
+  currentVersion: 0.1.0
+  dotnetVersion: 6.0.x
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ env.dotnetVersion }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.dotnetVersion }}
+      - name: create build version
+        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: confirm build version
+        run: echo $BUILD_VERSION
+
+      - name: dotnet restore
+        run: |
+          find . -type f -name *.csproj \
+            -exec dotnet restore {} \;
+
+      - name: dotnet build
+        run: |
+          find . -type f -name *.csproj \
+            -exec dotnet build {} \
+            --no-restore \
+            --configuration ${{ env.buildConfig }} \
+            /p:Version=$BUILD_VERSION \;
+
+      - name: dotnet test
+        run: | 
+          find ${{ env.testProjects }} -type f \
+            -exec dotnet test {} \
+            --no-build \
+            --configuration ${{ env.buildConfig }} \;
+
+      - name: dotnet pack
+        run: |
+          find ${{ env.srcProjects }} -type f \
+            -exec dotnet pack \
+            --no-build \
+            --configuration ${{ env.buildConfig }} \
+            --output artifact/packages \
+            /p:Version=$BUILD_VERSION \;
+
+      - uses: actions/cache@v3
+        id: cache-artifact
+        with:
+          path: ./artifact/*
+          key: ${{ github.sha }}
+
+  
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      
+      - name: Setup dotnet ${{ env.dotnetVersion }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.dotnetVersion }}
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PAT }}
+
+      - uses: actions/cache@v3
+        id: cache-artifact
+        with:
+          path: ./artifact/*
+          key: ${{ github.sha }}
+
+      - name: dotnet push
+        run: | 
+          dotnet nuget push ./artifact/packages/*.nupkg \
+            --api-key $NUGET_PAT \
+            --source $PACKAGE_SOURCE \
+            --skip-duplicate
+        env:
+          NUGET_PAT: ${{ secrets.NUGET_PAT}}
+          PACKAGE_SOURCE: https://api.nuget.org/v3/index.json
+        

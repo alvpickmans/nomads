@@ -9,8 +9,9 @@
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
+# User-specific files (MonoDevelop/Xamarin Studio/Rider)
 *.userprefs
+.idea/
 
 # Build results
 [Dd]ebug/
