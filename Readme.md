@@ -4,13 +4,11 @@ Exploring **monads** from the illiterate perspective of a software engineer that
 
 ## Motivation
 
-I'm mostly a C# developer, and OOP has been all I've known since the beginning ca. 2017. At work, I was introduced to *Railway Oriented Programming* [^1] by a colleague that created an internal library to chain and beautifully create workflows or logic steps.
-
-On the first PR review I stared at the amount of methods and overloads, could not understand the difference from something called `Bind()` and something else called `Map()` as they looked terribly similar. In all fairness, comments where very descriptive but without the theoretical background on monads and/or functional programming I feared we would struggle to introduce it as a company-wide pattern. Finally we settled on predominantly having a `Then()` method with overloads for when it acted as a `bind` or `map`, and I cannot stress enough how pleasant is to write code with it. 
+At some point at work, I was introduced to *Railway Oriented Programming* [^1] by a colleague that created an internal library to chain and beautifully create workflows or logic steps. Although descriptive enough, the simple difference between `Bind()` and `Map()` caught me unprepared and concerns were raised about how user friendly it would to OOP die-hard. We settled on predominantly having a `Then()` method with overloads for when it acted as a `bind` or `map`, and I cannot stress enough how pleasant is to write code with it. 
 
 In parallel, I started to sporadically dabble into [Rust](https://www.rust-lang.org) and soon fell in love with the `no such thing as null` feature and its `Result` and `Option` types, which after so many `Object null exceptions` in csharp, it felt like a breeze of fresh air and paradoxically the [right way to handle not having a value](https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare).
 
-This project is an attempt to better understand all this jazz, trying to bridge the gap between engineering and theory providing familiar constructs for the c# *connoisseur*.
+This project is an attempt to slowly understand functional programming concepts while at the same time implementing a utility library I'll be comfortable using. Focusing on practicality on C# rather that functional purism, this will aim to bridge the gap between engineering and theory providing familiar constructs for the c# *connoisseur*.
 
 > [!NOTE]
 > This project ~~will~~ might not be exactly what a Category Theory/Monads expert expect. There is an excellent project, [language-ext](https://github.com/louthy/language-ext) that basically brings almost all FP paradigms to c#. 
@@ -72,11 +70,11 @@ Result<string, string> sameTypeOkResult = new Ok("Ok");
 Result<string, string> sameTypeErrorResult = new Error("Err");
 ```
 
-> [!NOTE] Primitives `None`, `Ok` and `Error` records are primarily used for easy implicit casting in cases types are ambiguous or when user prefers them.
+> [!NOTE] Primitives `None`, `Ok` and `Error` records are primarily used for easy implicit casting in cases types are ambiguous or aligns with user preferences.
 
 ### Resolving values
 
-Both `Option` and `Result` provide a public `HasValue` property that can be queried to determine valid access to the (also public) `Value` property.
+Both `Option` and `Result` expose a public `HasValue` property that can be queried to determine valid access to the (also public) `Value` property.
 
 ```csharp
 Option<string> some = Option.Some("Hey");
@@ -120,7 +118,7 @@ var result = Result
 Assert.Equal("BYE", result.Value!);
 ```
 
-> The word `Select` is used to defined a commonly known as `map` operation as is more akin to C# syntax.
+> The word `Select` is used to defined what is commonly known in FP as `map` operation, being `Select` is more akin to C# syntax.
 
 ## Resources
 
