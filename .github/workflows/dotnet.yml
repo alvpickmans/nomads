@@ -7,10 +7,9 @@ on:
 
 env:
   buildConfig: Release
-  srcProjects: './src/**/*.csproj' 
-  testProjects: './tests/**/*.csproj' 
+  srcProjects: ./src/**/*.csproj
+  testProjects: ./tests/**/*.csproj
   currentVersion: 0.1.0
-  alphaVersion: '${{ env.currentVersion}}-alpha.${{ github.run_id }}'
 
 jobs:
   build:
@@ -25,6 +24,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{matrix.dotnet-version}}
+      - name: create build version
+        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: confirm build version
+        run: echo $BUILD_VERSION
 
       - name: dotnet restore
         run: |
@@ -37,7 +41,7 @@ jobs:
             -exec dotnet restore {} \
             --no-restore \
             --configuration ${{ env.buildConfig }} \
-            /p:Version=${{ env.alphaVersion }} \;
+            /p:Version=$BUILD_VERSION \;
 
       - name: dotnet test
         run: find ${{ env.testProjects }} -type f \
@@ -50,8 +54,9 @@ jobs:
           find ${{ env.srcProjects }} -type f \
             -exec dotnet pack \
             --no-build \
-            --configuration ${{ env.buildConfig }}
-            --output staging/packages
+            --configuration ${{ env.buildConfig }} \
+            --output staging/packages \
+            /p:Version=$BUILD_VERSION \;
 
       - name: upload artifacts
         uses: actions/upload-artifact@v3
