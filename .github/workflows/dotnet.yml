@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: ${{ env.dotnetVersion }}
       - name: create build version
-        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_id }}" >> $GITHUB_ENV
+        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: confirm build version
         run: echo $BUILD_VERSION
@@ -73,7 +73,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.dotnetVersion }}
-          source-url: https://api.nuget.org/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PAT }}
 
@@ -84,5 +83,12 @@ jobs:
           key: ${{ github.sha }}
 
       - name: dotnet push
-        run: dotnet nuget push ./artifact/packages/*.nupkg --skip-duplicate
+        run: | 
+          dotnet nuget push ./artifact/packages/*.nupkg \
+            --api-key $NUGET_PAT \
+            --source $PACKAGE_SOURCE \
+            --skip-duplicate
+        env:
+          NUGET_PAT: ${{ secrets.NUGET_PAT}}
+          PACKAGE_SOURCE: https://api.nuget.org/v3/index.json
         
