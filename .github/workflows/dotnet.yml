@@ -54,21 +54,15 @@ jobs:
             -exec dotnet pack \
             --no-build \
             --configuration ${{ env.buildConfig }} \
-            --output staging/packages \
+            --output artifact/packages \
             /p:Version=$BUILD_VERSION \;
 
-      - name: upload artifacts
-        uses: actions/upload-artifact@v3
+      - uses: actions/cache@v3
+        id: cache-artifact
         with:
-          name: Nomads
-          path: staging/**/*.nupkg
+          path: ./artifact/*
+          key: ${{ github.sha }}
 
-      - name: cache staging
-        id: cache-staging
-        uses: actions/cache@v3
-        with:
-          path: ./staging
-          key: staging
   
   release:
     runs-on: ubuntu-latest
@@ -83,6 +77,12 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PAT }}
 
-      - name: dotnet push
-        run: dotnet nuget push ./staging/packages/*.nupkg --skip-duplicate
+      - uses: actions/cache@v3
+        id: cache-artifact
+        with:
+          path: ./artifact/*
+          key: ${{ github.sha }}
+
+      - name: ls packages
+        run: find ./artifact -type f
         
