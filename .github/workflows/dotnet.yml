@@ -1,6 +1,9 @@
 name: dotnet package
 on: [push]
 
+env:
+  CONFIGURATION: Release
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,14 +25,7 @@ jobs:
         run: dotnet restore
 
       - name: dotnet build
-        run: dotnet build
+        run: dotnet build --no-restore --configuration $CONFIGURATION
 
       - name: dotnet test
-        run: dotnet test --logger trx --results-directory "TestResults-${{matrix.dotnet-version}}"
-
-      - name: Upload dotnet test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: dotnet-results-${{matrix.dotnet-version}}
-          path: TestResults-${{matrix.dotnet-version}}
-        if: ${{ always() }}
+        run: dotnet test --no-build --configuration $CONFIGURATION
