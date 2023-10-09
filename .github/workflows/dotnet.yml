@@ -25,7 +25,7 @@ jobs:
         with:
           dotnet-version: ${{matrix.dotnet-version}}
       - name: create build version
-        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_id }}" >> $GITHUB_ENV
+        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: confirm build version
         run: echo $BUILD_VERSION
@@ -44,10 +44,11 @@ jobs:
             /p:Version=$BUILD_VERSION \;
 
       - name: dotnet test
-        run: find ${{ env.testProjects }} -type f \
-          -exec dotnet test {} \
-          --no-build \
-          --configuration ${{ env.buildConfig }} \;
+        run: | 
+          find ${{ env.testProjects }} -type f \
+            -exec dotnet test {} \
+            --no-build \
+            --configuration ${{ env.buildConfig }} \;
 
       - name: dotnet pack
         run: |
