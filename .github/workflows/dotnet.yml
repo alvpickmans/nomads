@@ -1,15 +1,23 @@
 name: dotnet package
-on: [push]
+on: 
+  push:
+    branches:
+      - 'main'
+      - '_init'
 
 env:
-  CONFIGURATION: Release
+  buildConfig: Release
+  srcProjects: './src/**/*.csproj' 
+  testProjects: './tests/**/*.csproj' 
+  currentVersion: 0.1.0
+  alphaVersion: '${{ env.currentVersion}}-alpha.${{ github.run_id }}'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['6.0.x', '7.0.x']
+        dotnet-version: ['6.0.x']
 
     steps:
       - uses: actions/checkout@v4
@@ -18,15 +26,36 @@ jobs:
         with:
           dotnet-version: ${{matrix.dotnet-version}}
 
-      - name: Display dotnet version
-        run: dotnet --version
-
       - name: dotnet restore
-        run: dotnet restore
+        run: |
+          find . -type f -name *.csproj \
+            -exec dotnet restore {} \;
 
       - name: dotnet build
-        run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }}
+        run: |
+          find . -type f -name *.csproj \
+            -exec dotnet restore {} \
+            --no-restore \
+            --configuration ${{ env.buildConfig }} \
+            /p:Version=${{ env.alphaVersion }} \;
 
       - name: dotnet test
-        run: dotnet test --no-build --configuration $CONFIGURATION
+        run: find ${{ env.testProjects }} -type f \
+          -exec dotnet test {} \
+          --no-build \
+          --configuration ${{ env.buildConfig }} \;
+
+      - name: dotnet pack
+        run: |
+          find ${{ env.srcProjects }} -type f \
+            -exec dotnet pack \
+            --no-build \
+            --configuration ${{ env.buildConfig }}
+            --output staging/packages
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Nomads
+          path: staging/**/*.nupkg
 
