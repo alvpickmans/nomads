@@ -25,7 +25,7 @@ jobs:
         with:
           dotnet-version: ${{matrix.dotnet-version}}
       - name: create build version
-        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
+        run: echo "BUILD_VERSION=${{ env.currentVersion }}-alpha.${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: confirm build version
         run: echo $BUILD_VERSION
@@ -38,7 +38,7 @@ jobs:
       - name: dotnet build
         run: |
           find . -type f -name *.csproj \
-            -exec dotnet restore {} \
+            -exec dotnet build {} \
             --no-restore \
             --configuration ${{ env.buildConfig }} \
             /p:Version=$BUILD_VERSION \;
