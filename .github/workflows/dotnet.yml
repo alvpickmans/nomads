@@ -83,6 +83,6 @@ jobs:
           path: ./artifact/*
           key: ${{ github.sha }}
 
-      - name: ls packages
-        run: find ./artifact -type f
+      - name: dotnet push
+        run: dotnet nuget push ./artifact/packages/*.nupkg --skip-duplicate
         
