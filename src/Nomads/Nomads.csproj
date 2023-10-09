@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
 
 
 
