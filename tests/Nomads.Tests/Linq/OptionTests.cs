@@ -3,7 +3,7 @@ namespace Nomads.Linq;
 public class OptionTests
 {
     [Fact]
-    public void MapsOption_WithSelectValueExtension()
+    public void MapsOption_WithApplyValueExtension()
     {
         // Arrange
         const string farenheits = "451";
@@ -11,10 +11,10 @@ public class OptionTests
 
         // Act
         Option<double> celsius = Some(farenheits)
-            .Select(double.Parse)
-            .Select(x => x - 32)
-            .Select(x => x * 5.0)
-            .Select(x => x / 9.0);
+            .Apply(double.Parse)
+            .Apply(x => x - 32)
+            .Apply(x => x * 5.0)
+            .Apply(x => x / 9.0);
 
         // Assert
         Assert.True(celsius.HasValue);
@@ -22,11 +22,11 @@ public class OptionTests
     }
 
     [Fact]
-    public void MapsOption_WithSelectOptionExtension()
+    public void MapsOption_WithApplyOptionExtension()
     {
         // Act
         Option<double> option = Some("3.14")
-            .Select(TryParse);
+            .Apply(TryParse);
 
         // Assert
         Assert.True(option.HasValue);
@@ -35,11 +35,11 @@ public class OptionTests
     }
     
     [Fact]
-    public void MapsNoneOption_WithSelectOptionExtension()
+    public void MapsNoneOption_WithApplyOptionExtension()
     {
         // Act
         Option<double> option = Some("not a number")
-            .Select(TryParse);
+            .Apply(TryParse);
         
         // Assert
         Assert.False(option.HasValue);

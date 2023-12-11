@@ -16,7 +16,7 @@ public static class Result
     /// <typeparam name="TOut">Target type</typeparam>
     /// <typeparam name="TError">Error type</typeparam>
     /// <returns>A <see cref="Result{TValue,TError}"/> with its value type mapped</returns>
-    public static Result<TOut, TError> Select<TIn, TOut, TError>(
+    public static Result<TOut, TError> Apply<TIn, TOut, TError>(
         this Result<TIn, TError> result,
         Func<TIn, TOut> selector)
         where TIn : notnull
@@ -35,7 +35,7 @@ public static class Result
     /// <typeparam name="TOut">Target type</typeparam>
     /// <typeparam name="TError">Error type</typeparam>
     /// <returns>A <see cref="Result{TValue,TError}"/> with its value type mapped</returns>
-    public static Result<TOut, TError> Select<TIn, TOut, TError>(
+    public static Result<TOut, TError> Apply<TIn, TOut, TError>(
         this Result<TIn, TError> result,
         Func<TIn, Result<TOut, TError>> selector)
         where TIn : notnull

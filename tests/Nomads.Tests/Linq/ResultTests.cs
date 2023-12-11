@@ -3,14 +3,14 @@ namespace Nomads.Linq;
 public class ResultTests
 {
     [Fact]
-    public void MapsResult_WithSelectExtension()
+    public void MapsResult_WithApplyExtension()
     {
         // Arrange
         const double expectedValue = 6.28;
         
         // Act
         Result<double, string> valid = TryParse("3.14")
-            .Select(x => x * 2);
+            .Apply(x => x * 2);
 
         // Assert
         Assert.True(valid.HasValue);
@@ -18,14 +18,14 @@ public class ResultTests
     }
     
     [Fact]
-    public void MapsErrorResult_WithSelectExtension()
+    public void MapsErrorResult_WithApplyExtension()
     {
         // Arrange
         const string expectedError = "Input '3 quarters' is not a number";
         
         // Act
         Result<double, string> invalid = TryParse("3 quarters")
-            .Select(x => x * 2);
+            .Apply(x => x * 2);
         
         // Assert
         Assert.False(invalid.HasValue);
@@ -33,14 +33,14 @@ public class ResultTests
     }
     
     [Fact]
-    public void MapsResult_WithSelectorResultExtension()
+    public void MapsResult_WithApplyorResultExtension()
     {
         // Arrange
         const double expectedValue = 3.14;
         
         // Act
         Result<double, string> result = Ok<string, string>("3.14")
-            .Select(TryParse);
+            .Apply(TryParse);
         
         // Assert
         Assert.True(result.HasValue);
@@ -48,14 +48,14 @@ public class ResultTests
     }
 
     [Fact]
-    public void MapsErrorResult_WithSelectorResultExtension()
+    public void MapsErrorResult_WithApplyorResultExtension()
     {
         // Arrange
         const string expectedError = "Unauthorized";
         
         // Act
         Result<double, string> result = Error<string, string>(expectedError)
-            .Select(TryParse);
+            .Apply(TryParse);
         
         // Assert
         Assert.False(result.HasValue);

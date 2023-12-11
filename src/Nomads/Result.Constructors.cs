@@ -31,7 +31,7 @@ public static partial class Result
     /// <code>
     /// <![CDATA[
     /// Result<double, string> result = Result.Ok<string, string>("43.0")
-    ///     .Select(x => double.TryParse(x, out double value)
+    ///     .Apply(x => double.TryParse(x, out double value)
     ///         ? value
     ///         : "Invalid input"
     ///     );
@@ -65,7 +65,7 @@ public static partial class Result
     /// <code>
     /// <![CDATA[
     /// Result<double, string> result = Result.Error<string, string>("Failing result")
-    ///     .Select(x => double.TryParse(x, out double value)
+    ///     .Apply(x => double.TryParse(x, out double value)
     ///         ? value
     ///         : "Invalid input"
     ///     );

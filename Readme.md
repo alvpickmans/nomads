@@ -102,23 +102,21 @@ string result = Error<string, Exception>(new Exception("I failed you"))
     );
 ```
 
-### Map (aka Select)
+### Apply (aka Select)
 
-Both `Option` and `Result` functors can be "mapped" with function delegates using `Select()` extension methods.
+Both `Option` and `Result` functors can be "mapped" with function delegates using `Apply()` extension methods.
 
 ```csharp
 var option = Option
     .Some("hi")
-    .Select(x => x.ToUpper());
+    .Apply(x => x.ToUpper());
 Assert.Equal("HI", option.Value!);
 
 var result = Result
     .Ok("bye")
-    .Select(x => x.ToUpper());
+    .Apply(x => x.ToUpper());
 Assert.Equal("BYE", result.Value!);
 ```
-
-> The word `Select` is used to defined what is commonly known in FP as `map` operation, being `Select` is more akin to C# syntax.
 
 ## Resources
 
