@@ -1,86 +1,114 @@
-using Nomads.Primitives;
+using FluentAssertions;
+using None = Nomads.Primitives.None;
 
 namespace Nomads;
 
-public class OptionTests
+public static class OptionTests
 {
-    [Fact]
-    public void CreatesOption_WithSomeConstructor()
+    public class Constructors
     {
-        // Arrange
-        const string expected = "Hi";
+        [Fact]
+        public void with_Some_constructor() =>
+            Some("Hi")
+                .Reduce("err")
+                .Should()
+                .Be("Hi");
+
+        [Fact]
+        public void with_None_constructor() =>
+            None()
+                .As<Option<string>>()
+                .Should()
+                .Be(new Option<string>());
+
+        [Fact]
+        public void from_implicit_value()
+        {
+            Option<int> option = 42;
+            option.Should().Be(Some(42));
+        }
+
+        [Fact]
+        public void from_implicit_None() =>
+            new None()
+                .As<Option<object>>()
+                .Should().Be(new Option<object>());
+    }
+
+
+    public class Equality
+    {
+        [Fact]
+        public void with_Some_instance()
+        {
+            Option<string> option = "All good folks.";
+            string result = Some("All good folks.") == option
+                ? "ok"
+                : "err";
+
+            result.Should().Be("ok");
+        }
         
-        // Act
-        Option<string> option = Some(expected);
+        [Fact]
+        public void with_None_instance()
+        {
+            Option<string> option = "All good folks.";
+            string result = None() == option
+                ? "ok"
+                : "err";
 
-        // Assert
-        Assert.True(option.HasValue);
-        Assert.Equal(expected, option.Value);
+            result.Should().Be("err");
+        }
     }
+
+
+
+    public class Reduce
+    {
     
-    [Fact]
-    public void CreatesEmptyOption_WithNoneConstructor()
-    {
-        // Act
-        Option<string> option = None();
+        [Fact]
+        public void from_none_and_value() =>
+            None<string>()
+                .Reduce("look ma, no hands")
+                .Should().Be("look ma, no hands");
 
-        // Assert
-        Assert.False(option.HasValue);
-        Assert.Null(option.Value);
+        [Fact]
+        public void from_none_and_delegate() =>
+            None<string>()
+                .Reduce(() => "look ma, no hands")
+                .Should().Be("look ma, no hands");
     }
 
-    [Fact]
-    public void CreatesOption_WithImplicitConversion()
+
+    public class Map
     {
-        // Arrange
-        int expected = 42;
-
-        // Act
-        Option<int> option = expected;
-
-        // Assert
-        Assert.True(option.HasValue);
-        Assert.Equal(expected, option.Value);
-    }
-
-    [Fact]
-    public void CreatesEmptyOption_WithImplicitNoneOperator()
-    {
-        // Act
-        Option<int> option = new None();
-
-        // Assert
-        Assert.False(option.HasValue);
-        Assert.Equal(default, option.Value);
-    }
+        
+        [Fact]
+        public void with_value_type_delegates() =>
+            Some("451")
+                .Map(double.Parse)
+                .Map(x => x - 32)
+                .Map(x => x * 5.0)
+                .Map(x => x / 9.0)
+                .Reduce(-1)
+                .Should().BeApproximately(232.778, precision: 3);
 
     [Fact]
-    public void OptionEquals_WithSomeConstructor()
-    {
-        // Arrange
-        Option<string> option = "All good folks.";
+    public void optional_delegate_returning_Some() =>
+        Some("3.14")
+            .MapOptional(TryParse)
+            .Reduce(-1)
+            .Should().BeApproximately(3.14, precision: 2);
 
-        // Act
-        string result = Some("All good folks.") == option
-            ? option.Value!
-            : "err";
-
-        // Assert
-        Assert.Equal("All good folks.", result);
-    }
-    
     [Fact]
-    public void OptionEquals_WithNoneConstructor()
-    {
-        // Arrange
-        Option<string> option = "All good folks.";
+    public void optional_delegate_returning_None() =>
+        Some("not a number")
+            .MapOptional(TryParse)
+            .Should().Be(None<double>());
 
-        // Act
-        string result = None() == option
-            ? option.Value!
-            : "err";
-
-        // Assert
-        Assert.Equal("err", result);
+    private static Option<double> TryParse(string input) =>
+            double.TryParse(input, out double value)
+                ? value
+                : None();
     }
 }
