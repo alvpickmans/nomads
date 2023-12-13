@@ -72,23 +72,12 @@ Result<string, string> sameTypeErrorResult = new Error("Err");
 
 > [!NOTE] Primitives `None`, `Ok` and `Error` records are primarily used for easy implicit casting in cases types are ambiguous or aligns with user preferences.
 
-### Resolving values
+### Reduce
 
-Both `Option` and `Result` expose a public `HasValue` property that can be queried to determine valid access to the (also public) `Value` property.
+To safely retrieve inner value (or error for Results), the `Reduce()` method allows to define a delegate so that:
 
-```csharp
-Option<string> some = Option.Some("Hey");
-string value = some.HasValue 
-    ? some.Value! 
-    : "???";
-
-Result<string, Exception> result = new Exception("I failed you");
-string output = result.HasValue 
-    ? result.Value 
-    : result.Error!.Message;
-```
-
-Optionally and for convenience, extension methods are provided.
+- It can be used instead in cases where Option is empty
+- Allows to handle the error scenario (or transform the result's value to another type)
 
 ```csharp
 string value = Option
@@ -96,7 +85,7 @@ string value = Option
     .Reduce("???");
 
 string result = Error<string, Exception>(new Exception("I failed you"))
-    .Match(
+    .Reduce(
         ok => ok,
         err => err.Message
     );
@@ -125,6 +114,7 @@ Assert.Equal("BYE", result.Value!);
     - [Part 2](https://bartoszmilewski.com/2011/03/14/monads-for-the-curious-programmer-part-2)
     - [Part 3](https://bartoszmilewski.com/2011/03/17/monads-for-the-curious-programmer-part-3)
 - [Functors, Applicatives, And Monads In Pictures](https://www.adit.io/posts/2013-04-17-functors,-applicatives,_and_monads_in_pictures.html)
+- [The "Map and Bind and Apply, Oh my!" series](https://fsharpforfunandprofit.com/series/map-and-bind-and-apply-oh-my/) by Scott Wlaschin
 
 
 ## License
