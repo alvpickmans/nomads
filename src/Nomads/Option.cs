@@ -40,7 +40,7 @@ public readonly record struct Option<T> : IEquatable<None> where T : notnull
     /// <param name="fallback"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T Reduce(Func<T> fallback) => _value is not null ? _value : fallback();
+    public T Reduce(Func<T> fallback) => _value ?? fallback();
     
     /// <summary>
     /// Returns the value of an <see cref="Option{T}"/> if it
