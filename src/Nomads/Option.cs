@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Nomads.Primitives;
 
 namespace Nomads;
@@ -6,9 +7,11 @@ namespace Nomads;
 /// Base model (functor?) representing either a value or nothing.
 /// </summary>
 /// <typeparam name="T">Type of value</typeparam>
+[DebuggerDisplay("{Display,nq}")]
 public readonly record struct Option<T> : IEquatable<None> where T : notnull
 {
     private readonly T? _value;
+    private string Display => _value is null ? "None()" : $"Some({_value})";
 
     /// <summary>
     /// Creates a instances of <see cref="Option{T}"/> with a value
