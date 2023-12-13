@@ -13,7 +13,7 @@ public static partial class Result
     /// <typeparam name="TError"></typeparam>
     /// <typeparam name="TOut"></typeparam>
     /// <returns></returns>
-    public static TOut Match<TValue, TError, TOut>(
+    public static TOut Reduce<TValue, TError, TOut>(
         this Result<TValue, TError> result,
         Func<TValue, TOut> okDelegate,
         Func<TError, TOut> errorDelegate)

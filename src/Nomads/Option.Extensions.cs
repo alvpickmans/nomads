@@ -11,7 +11,7 @@ public static partial class Option
     /// <param name="fallback"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T ValueOrElse<T>(this Option<T> option, T fallback) where T : notnull =>
+    public static T Reduce<T>(this Option<T> option, T fallback) where T : notnull =>
         option.HasValue ? option.Value! : fallback;
 
 }

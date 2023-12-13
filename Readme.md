@@ -91,9 +91,9 @@ string output = result.HasValue
 Optionally and for convenience, extension methods are provided.
 
 ```csharp
-Option<string> value = Option
+string value = Option
     .Some("Hey")
-    .ValueOrElse("???");
+    .Reduce("???");
 
 string result = Error<string, Exception>(new Exception("I failed you"))
     .Match(
@@ -102,19 +102,19 @@ string result = Error<string, Exception>(new Exception("I failed you"))
     );
 ```
 
-### Apply (aka Select)
+### Map (aka Select)
 
-Both `Option` and `Result` functors can be "mapped" with function delegates using `Apply()` extension methods.
+Both `Option` and `Result` functors can be "mapped" with function delegates using `Map()` extension methods.
 
 ```csharp
 var option = Option
     .Some("hi")
-    .Apply(x => x.ToUpper());
+    .Map(x => x.ToUpper());
 Assert.Equal("HI", option.Value!);
 
 var result = Result
     .Ok("bye")
-    .Apply(x => x.ToUpper());
+    .Map(x => x.ToUpper());
 Assert.Equal("BYE", result.Value!);
 ```
 

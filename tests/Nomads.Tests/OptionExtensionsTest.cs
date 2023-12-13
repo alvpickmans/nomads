@@ -9,7 +9,7 @@ public sealed class OptionExtensionsTest
         Option<string> option = None();
         
         // Act
-        string value = option.ValueOrElse("look ma, no hands");
+        string value = option.Reduce("look ma, no hands");
         
         // Assert
         Assert.Equal("look ma, no hands", value);

@@ -9,11 +9,11 @@ public sealed class ResultExtensionsTests
     {
         // Arrange
         const string firstName = "Bruce";
-        var expected = okResult ? "Bruce Wayne" : "Bruce Banner";
+        string expected = okResult ? "Bruce Wayne" : "Bruce Banner";
         Result<string, string> result = okResult ? Ok(firstName) : Error(firstName);
         
         // Act 
-        var value = result.Match(
+        string value = result.Reduce(
             ok => $"{ok} Wayne",
             err => $"{err} Banner");
         
@@ -27,11 +27,11 @@ public sealed class ResultExtensionsTests
     public void MatchesDelegate_OnResult_WithDifferentType(bool okResult)
     {
         // Arrange
-        var expected = okResult ? 42 : -1;
+        int expected = okResult ? 42 : -1;
         Result<string, string> result = okResult ? Ok("42") : Error("Something failed");
         
         // Act 
-        var value = result.Match(
+        int value = result.Reduce(
             int.Parse,
             _ => -1);
         
