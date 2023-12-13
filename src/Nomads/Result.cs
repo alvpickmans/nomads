@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Nomads.Primitives;
 
 namespace Nomads;
@@ -7,6 +8,7 @@ namespace Nomads;
 /// </summary>
 /// <typeparam name="TValue">Type of successful state value</typeparam>
 /// <typeparam name="TError">Type of failed state value</typeparam>
+[DebuggerDisplay("{Display,nq}")]
 public readonly record struct Result<TValue, TError>
     where TValue : notnull
     where TError : notnull
@@ -14,6 +16,7 @@ public readonly record struct Result<TValue, TError>
     private readonly bool _hasValue;
     private readonly TValue? _value;
     private readonly TError? _error;
+    private string Display => _hasValue ? $"Ok({_value})" : $"Error({_error})";
 
     private Result(TValue value) => (_value, _hasValue) = (value, true);
 
