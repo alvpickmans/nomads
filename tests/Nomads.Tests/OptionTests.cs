@@ -67,13 +67,25 @@ public static class OptionTests
     {
     
         [Fact]
-        public void from_none_and_value() =>
+        public void from_value_type_option() =>
+            None<int>()
+                .Reduce(-1)
+                .Should().Be(-1);
+        
+        [Fact]
+        public void from_reference_type_option() =>
             None<string>()
-                .Reduce("look ma, no hands")
-                .Should().Be("look ma, no hands");
+                .Reduce("fallback")
+                .Should().Be("fallback");
+        
+        [Fact]
+        public void from_value_type_option_and_delegate() =>
+            None<bool>()
+                .Reduce(() => true)
+                .Should().Be(true);
 
         [Fact]
-        public void from_none_and_delegate() =>
+        public void from_reference_type_option_and_delegate() =>
             None<string>()
                 .Reduce(() => "look ma, no hands")
                 .Should().Be("look ma, no hands");

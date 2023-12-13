@@ -10,6 +10,7 @@ namespace Nomads;
 [DebuggerDisplay("{Display,nq}")]
 public readonly record struct Option<T> : IEquatable<None> where T : notnull
 {
+    private readonly bool _hasValue;
     private readonly T? _value;
     private string Display => _value is null ? "None()" : $"Some({_value})";
 
@@ -17,7 +18,7 @@ public readonly record struct Option<T> : IEquatable<None> where T : notnull
     /// Creates a instances of <see cref="Option{T}"/> with a value
     /// </summary>
     /// <param name="value"></param>
-    private Option(T value) => _value = value;
+    private Option(T value) => (_value, _hasValue) = (value, true);
 
     /// <summary>
     /// Implicitly creates an instance of <see cref="Option{T}"/> with a value
@@ -40,7 +41,9 @@ public readonly record struct Option<T> : IEquatable<None> where T : notnull
     /// <param name="fallback"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T Reduce(Func<T> fallback) => _value ?? fallback();
+    public T Reduce(Func<T> fallback) => _hasValue
+        ? _value!
+        : fallback();
     
     /// <summary>
     /// Returns the value of an <see cref="Option{T}"/> if it
@@ -58,8 +61,8 @@ public readonly record struct Option<T> : IEquatable<None> where T : notnull
     /// <typeparam name="TOut">Target type</typeparam>
     /// <returns>An <see cref="Option{T}"/> with its value type mapped</returns>
     public Option<TOut> Map<TOut>(Func<T, TOut> selector) where TOut : notnull =>
-        _value is not null 
-            ? selector.Invoke(_value) 
+        _hasValue 
+            ? selector.Invoke(_value!)
             : new Option<TOut>();
 
     public bool Equals(None other) => _value is null;

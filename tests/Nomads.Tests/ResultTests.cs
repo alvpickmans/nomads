@@ -73,14 +73,14 @@ public class ResultTests
     public class Reduce
     {
         [Fact]
-        public void from_ok_and_delegate() =>
-            Ok<string, Exception>("ok")
+        public void from_value_type_result() =>
+            Ok<int, Exception>(42)
                 .Reduce(
-                    ok => ok.Should().Be("ok"),
+                    ok => ok.Should().Be(42),
                     _ => throw new Exception("Unexpected error branch"));
 
         [Fact]
-        public void from_error_and_delegate() =>
+        public void from_reference_type_result() =>
             Error<string, Exception>(new Exception("oh no!"))
                 .Reduce(
                     _ => throw new Exception("Unexpected error branch"),
