@@ -35,7 +35,6 @@ public static class OptionTests
                 .Should().Be(new Option<object>());
     }
 
-
     public class Equality
     {
         [Fact]
@@ -61,11 +60,8 @@ public static class OptionTests
         }
     }
 
-
-
     public class Reduce
     {
-    
         [Fact]
         public void from_value_type_option() =>
             None<int>()
@@ -91,10 +87,8 @@ public static class OptionTests
                 .Should().Be("look ma, no hands");
     }
 
-
     public class Map
     {
-        
         [Fact]
         public void with_value_type_delegates() =>
             Some("451")
