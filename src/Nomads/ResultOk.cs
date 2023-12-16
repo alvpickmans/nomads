@@ -6,7 +6,10 @@
 /// </summary>
 /// <param name="Value">Successful value instance</param>
 /// <typeparam name="T">Value type</typeparam>
-public record struct Ok<T>(T Value) where T : notnull;
+public record struct Ok<T>(T Value) where T : notnull
+{
+    public static implicit operator Ok<T>(T value) => new (value);
+}
 
 /// <summary>
 /// Concrete instance of a successful <see cref="Result{T,TErr}"/> with a

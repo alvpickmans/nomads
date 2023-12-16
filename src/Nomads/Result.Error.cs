@@ -6,7 +6,10 @@
 /// </summary>
 /// <param name="Value">Error instance</param>
 /// <typeparam name="TErr">Error type</typeparam>
-public record Error<TErr>(TErr Value) where TErr : notnull;
+public record Error<TErr>(TErr Value) where TErr : notnull
+{
+    public static implicit operator Error<TErr>(TErr value) => new(value);
+}
 
 /// <summary>
 /// Concrete instance of an error <see cref="Result{T,TErr}"/> with a
