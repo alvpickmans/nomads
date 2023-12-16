@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Nomads.Primitives;
 
 namespace Nomads;
@@ -7,12 +6,10 @@ namespace Nomads;
 /// Base model (functor?) representing either a value or nothing.
 /// </summary>
 /// <typeparam name="T">Type of value</typeparam>
-[DebuggerDisplay("{Display,nq}")]
 public readonly record struct Option<T> : IEquatable<None> where T : notnull
 {
     private readonly bool _hasValue;
     private readonly T? _value;
-    private string Display => _value is null ? "None()" : $"Some({_value})";
 
     /// <summary>
     /// Creates a instances of <see cref="Option{T}"/> with a value
@@ -65,5 +62,6 @@ public readonly record struct Option<T> : IEquatable<None> where T : notnull
             ? selector.Invoke(_value!)
             : new Option<TOut>();
 
-    public bool Equals(None other) => _value is null;
+    public bool Equals(None other) => !_hasValue;
+    public override string ToString() => _hasValue ? $"Some({_value})" : "None()";
 }
