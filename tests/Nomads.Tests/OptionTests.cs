@@ -1,6 +1,4 @@
 using FluentAssertions;
-using None = Nomads.Primitives.None;
-
 namespace Nomads;
 
 public static class OptionTests
@@ -15,11 +13,11 @@ public static class OptionTests
                 .Be("Hi");
 
         [Fact]
-        public void with_None_constructor() =>
-            None()
-                .As<Option<string>>()
-                .Should()
-                .Be(new Option<string>());
+        public void with_None_constructor()
+        {
+            Option<string> none = new None();
+            none.Should().Be(new None<string>());
+        }
 
         [Fact]
         public void from_implicit_value()
@@ -27,12 +25,6 @@ public static class OptionTests
             Option<int> option = 42;
             option.Should().Be(Some(42));
         }
-
-        [Fact]
-        public void from_implicit_None() =>
-            new None()
-                .As<Option<object>>()
-                .Should().Be(new Option<object>());
     }
 
     public class Equality

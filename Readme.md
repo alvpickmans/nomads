@@ -25,8 +25,18 @@ Also, it sounds kinda cute.
 
 Nomads provide implementations for the basic functional functors `Option<T>` and `Result<TValue, TError>`.
 
-
 ### Instancing
+**Inheritance types Constructors**
+
+```csharp
+using Nomads;
+
+Option<string> someOption = new Some<string>("Hi");
+Option<string> noneOption = new None<string>();
+
+Result<string, int> okResult = new Ok<string, int>("Ok");
+Result<string, int> okResult = new Error<string, int>(-1);
+```
 
 **Static Constructors**
 ```csharp
@@ -69,8 +79,6 @@ Result<string, int> okResult = -1;
 Result<string, string> sameTypeOkResult = new Ok("Ok");
 Result<string, string> sameTypeErrorResult = new Error("Err");
 ```
-
-> [!NOTE] Primitives `None`, `Ok` and `Error` records are primarily used for easy implicit casting in cases types are ambiguous or aligns with user preferences.
 
 ### Reduce
 
