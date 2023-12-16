@@ -1,18 +1,4 @@
-using Nomads.Primitives;
-
 namespace Nomads;
-
-public record Some<T>(T Value) : Option<T>, IEquatable<Option<T>> where T : notnull
-{
-    bool IEquatable<Option<T>>.Equals(Option<T>? other) =>
-        other is Some<T> some && Value.Equals(some.Value);
-}
-
-public record None<T> : Option<T>, IEquatable<Option<T>> where T : notnull
-{
-    public static implicit operator None<T>(None _) => new();
-    bool IEquatable<Option<T>>.Equals(Option<T>? other) => other is None<T>;
-}
 
 /// <summary>
 /// Base model (functor?) representing either a value or nothing.

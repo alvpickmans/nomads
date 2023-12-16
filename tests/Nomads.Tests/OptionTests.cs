@@ -1,6 +1,4 @@
 using FluentAssertions;
-using None = Nomads.Primitives.None;
-
 namespace Nomads;
 
 public static class OptionTests
