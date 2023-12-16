@@ -1,7 +1,4 @@
 using Nomads.Primitives;
-#if NET_6_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace Nomads;
 
@@ -14,28 +11,13 @@ public readonly record struct Result<TValue, TError>
     where TValue : notnull
     where TError : notnull
 {
-    /// <summary>
-    /// Result's value, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns true.
-    /// </summary>
-    public readonly TValue? Value;
+    private readonly bool _hasValue;
+    private readonly TValue? _value;
+    private readonly TError? _error;
 
-    /// <summary>
-    /// Result's error, only accessible if <see cref="Result{TValue,TError}.HasValue"/> returns false.
-    /// </summary>
-    public readonly TError? Error;
-    
-    /// <summary>
-    /// Determines if the instance of <see cref="Result{TValue, TError}"/> has a value or not
-    /// </summary>
-#if NET_6_OR_GREATER
-    [MemberNotNullWhen(true, nameof(Value))]
-    [MemberNotNullWhen(false, nameof(Error))]
-#endif
-    public readonly bool HasValue;
+    private Result(TValue value) => (_value, _hasValue) = (value, true);
 
-    private Result(TValue value) => (Value, Error, HasValue) = (value, default, true);
-    
-    private Result(TError error) => (Value, Error) = (default, error);
+    private Result(TError error) => _error = error;
 
     /// <summary>
     /// Implicitly creates a successful instance of <see cref="Result{TValue,TError}"/>
@@ -67,4 +49,35 @@ public readonly record struct Result<TValue, TError>
     /// <returns></returns>
     public static implicit operator Result<TValue, TError>(Error<TError> error) => new(error.Value);
     
+    /// <summary>
+    /// Method that runs a delegate on eiter Value or Error case,
+    /// allowing to materialise a resulting value from a <see cref="Result{TValue,TError}"/>
+    /// </summary>
+    /// <param name="okDelegate"></param>
+    /// <param name="errorDelegate"></param>
+    /// <typeparam name="TValue"></typeparam>
+    /// <typeparam name="TError"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <returns></returns>
+    public TOut Reduce<TOut>(
+        Func<TValue, TOut> okDelegate,
+        Func<TError, TOut> errorDelegate) =>
+        _hasValue
+            ? okDelegate.Invoke(_value!)
+            : errorDelegate.Invoke(_error!);
+    
+    /// <summary>
+    /// Applies a mapping function to a <see cref="Result{TValue,TError}"/>
+    /// </summary>
+    /// <param name="selector">Mapping function</param>
+    /// <typeparam name="TOut">Target type</typeparam>
+    /// <returns>A <see cref="Result{TValue,TError}"/> with its value type mapped</returns>
+    public Result<TOut, TError> Map<TOut>(
+        Func<TValue, TOut> selector)
+        where TOut : notnull =>
+        _hasValue
+            ? selector.Invoke(_value!)
+            : _error!;
+    
+    public override string ToString() => _hasValue ? $"Ok({_value})" : $"Error({_error})";
 }

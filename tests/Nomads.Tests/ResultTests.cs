@@ -1,94 +1,116 @@
+using FluentAssertions;
+
 namespace Nomads;
 
 public class ResultTests
 {
-    [Fact]
-    public void CreatesResult_WithOkConstructor()
+    public class Constructors
     {
-        // Arrange
-        const string expected = "Success!";
-
-        // Act
-        Result<string, Exception> result = Ok(expected);
-
-        // Assert
-        Assert.True(result.HasValue);
-        Assert.Equal(expected, result.Value);
-        Assert.Null(result.Error);
-    }
+        [Fact]
+        public void with_Ok_constructor()
+        {
+            Result<string, Exception> result = Ok("Success!");
+            result
+                .Reduce(ok => ok, err => err.Message)
+                .Should().Be("Success!");
+        }
+        
+        [Fact]
+        public void with_implicit_Ok()
+        {
+            Result<string, Exception> result = "Success!";
+            result
+                .Reduce(ok => ok, err => err.Message)
+                .Should().Be("Success!");
+        }
     
-    [Fact]
-    public void CreatesResult_WithImplicitConversion()
-    {
-        // Arrange
-        const string expected = "Success!";
-
-        // Act
-        Result<string, Exception> result = expected;
-
-        // Assert
-        Assert.True(result.HasValue);
-        Assert.Equal(expected, result.Value);
-        Assert.Null(result.Error);
+        [Fact]
+        public void with_Error_constructor()
+        {
+            Result<string, Exception> result = Error(new Exception("The operation failed"));
+            result
+                .Reduce(ok => ok, err => err.Message)
+                .Should().Be("The operation failed");
+        }
+        
+        [Fact]
+        public void with_implicit_Error()
+        {
+            Result<string, Exception> result = new Exception("The operation failed");
+            result
+                .Reduce(ok => ok, err => err.Message)
+                .Should().Be("The operation failed");
+        }
     }
+
+    public class Equality
+    {
     
-    [Fact]
-    public void CreatesErrorResult_WithErrorConstructor()
-    {
-        // Arrange
-        const string message = "The operation failed";
+        [Fact]
+        public void with_Ok_instance()
+        {
+            Result<string, Exception> result = "All good folks.";
+            string output = Ok("All good folks.") == result
+                ? "ok"
+                : "err";
 
-        // Act
-        Result<string, Exception> result = Error(new Exception(message));
-
-        // Assert
-        Assert.False(result.HasValue);
-        Assert.Equal(message, result.Error!.Message);
-        Assert.Equal(default, result.Value);
-    }
+            output.Should().Be("ok");
+        }
+        
     
-    [Fact]
-    public void CreatesErrorResult_WithImplicitConversion()
-    {
-        // Arrange
-        const string message = "The operation failed";
+        [Fact]
+        public void with_Error_instance()
+        {
+            Result<string, int> result = -1;
+            string output = Error(-1) == result
+                ? "err"
+                : "ok";
 
-        // Act
-        Result<string, Exception> result = new Exception(message);
-
-        // Assert
-        Assert.False(result.HasValue);
-        Assert.Equal(message, result.Error!.Message);
-        Assert.Equal(default, result.Value);
+            output.Should().Be("err");
+        }
     }
 
-    [Fact]
-    public void ResultEquals_WithOkConstructor()
+    public class Reduce
     {
-        // Arrange
-        Result<string, Exception> result = "All good folks.";
+        [Fact]
+        public void from_value_type_result() =>
+            Ok<int, Exception>(42)
+                .Reduce(
+                    ok => ok.Should().Be(42),
+                    _ => throw new Exception("Unexpected error branch"));
 
-        // Act
-        string output = Ok("All good folks.") == result
-            ? result.Value!
-            : "err";
-
-        // Assert
-        Assert.Equal("All good folks.", output);
+        [Fact]
+        public void from_reference_type_result() =>
+            Error<string, Exception>(new Exception("oh no!"))
+                .Reduce(
+                    _ => throw new Exception("Unexpected error branch"),
+                    err => err.Message.Should().Be("oh no!")
+                );
     }
-    
-    [Fact]
-    public void ResultEquals_WithErrorConstructor()
+
+    public class Map
     {
-        // Arrange
-        Result<string, int> result = -1;
-
-        // Act
-        string output = result == Error(-1)
-            ? "err"
-            : result.Value!;
-
-        // Assert
-        Assert.Equal("err", output);
+        [Fact]
+        public void ok_result_with_value_type_delegate() =>
+            TryParse("3.14")
+                .Map(x => x * 2)
+                .Reduce(
+                    amount => amount.Should().BeApproximately(6.28, precision: 2),
+                    err => throw new Exception(err)
+                );
+        
+        [Fact]
+        public void error_result_with_value_type_delegate() =>
+            TryParse("3 quarters")
+                .Map(x => x * 2)
+                .Reduce(
+                    _ => throw new Exception("Unexpected ok branch"),
+                    err => err.Should().Be("Input '3 quarters' is not a number")
+                );
+            
+        private static Result<double, string> TryParse(string input) =>
+            double.TryParse(input, out double value)
+                ? value
+                : $"Input '{input}' is not a number";
     }
 }

@@ -49,6 +49,7 @@ jobs:
             --configuration ${{ env.buildConfig }} \;
 
       - name: dotnet pack
+        if: github.ref == 'refs/heads/main'
         run: |
           find ${{ env.srcProjects }} -type f \
             -exec dotnet pack \
@@ -59,6 +60,7 @@ jobs:
 
       - uses: actions/cache@v3
         id: cache-artifact
+        if: github.ref == 'refs/heads/main'
         with:
           path: ./artifact/*
           key: ${{ github.sha }}

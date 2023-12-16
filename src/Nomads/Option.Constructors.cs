@@ -24,6 +24,20 @@ public static partial class Option
     public static Option<T> Some<T>(T value) where T : notnull => value;
 
     /// <summary>
+    /// Creates an empty instance of <see cref="Option{T}"/>
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// <![CDATA[
+    /// Option<string> stringOption = Option.None<string>();
+    /// Option<bool> booleanOption = Option.None<string>();
+    /// ]]>
+    /// </code>
+    /// </example>
+    /// <returns></returns>
+    public static Option<T> None<T>() where T : notnull => new();
+    
+    /// <summary>
     /// Creates a new instance of <see cref="None"/>, generally used to convert it to
     /// an empty <see cref="Option{T}"/>
     /// </summary>
